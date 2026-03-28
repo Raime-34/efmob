@@ -2,11 +2,16 @@ package subscriptions
 
 import (
 	"context"
-	"efmob/internal/dto"
-	dbinterface "efmob/internal/repositories/db_interface"
+	"errors"
 	"fmt"
 	"time"
+
+	"efmob/internal/dto"
+	dbinterface "efmob/internal/repositories/db_interface"
 )
+
+// ErrSubscriptionNotFound — DELETE/UPDATE не затронули ни одной строки (записи нет).
+var ErrSubscriptionNotFound = errors.New("subscriptions: no matching subscription row")
 
 type SubscriptionRepo struct {
 	db dbinterface.DbIface
@@ -67,7 +72,7 @@ func (r *SubscriptionRepo) GetSubscriptionInfo(ctx context.Context, subscription
 }
 
 func (r *SubscriptionRepo) DeleteSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
-	_, err := r.db.Exec(
+	tag, err := r.db.Exec(
 		ctx,
 		deleteSubscriptionData(),
 		subscriptionInfo.UserID,
@@ -76,12 +81,15 @@ func (r *SubscriptionRepo) DeleteSubscriptionInfo(ctx context.Context, subscript
 	if err != nil {
 		return fmt.Errorf("DeleteSubscriptionInfo - Failed to delete subscription info: %w", err)
 	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("DeleteSubscriptionInfo - %w", ErrSubscriptionNotFound)
+	}
 
 	return nil
 }
 
 func (r *SubscriptionRepo) UpdateSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
-	_, err := r.db.Exec(
+	tag, err := r.db.Exec(
 		ctx,
 		updateSubscriptionData(),
 		subscriptionInfo.UserID,
@@ -92,6 +100,9 @@ func (r *SubscriptionRepo) UpdateSubscriptionInfo(ctx context.Context, subscript
 	)
 	if err != nil {
 		return fmt.Errorf("UpdateSubscriptionInfo - Failed to update subscription info: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return fmt.Errorf("UpdateSubscriptionInfo - %w", ErrSubscriptionNotFound)
 	}
 
 	return nil

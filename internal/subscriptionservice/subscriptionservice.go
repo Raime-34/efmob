@@ -6,8 +6,10 @@ import (
 	"efmob/internal/dto"
 	"efmob/internal/migrate"
 	"efmob/internal/repositories"
+	"efmob/internal/repositories/subscriptions"
 	"efmob/logger"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -94,7 +96,12 @@ func (s *SubService) DeleteSubscriptionHandler(w http.ResponseWriter, r *http.Re
 	err = s.repo.DeleteSubscriptionInfo(r.Context(), req)
 	if err != nil {
 		logger.Log().Error("DeleteSubscriptionHandler", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError)
+		switch {
+		case errors.Is(err, subscriptions.ErrSubscriptionNotFound):
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 }
@@ -112,7 +119,12 @@ func (s *SubService) UpdateSubscriptionHandler(w http.ResponseWriter, r *http.Re
 	err = s.repo.UpdateSubscriptionInfo(r.Context(), req)
 	if err != nil {
 		logger.Log().Error("UpdateSubscriptionHandler", zap.Error(err))
-		w.WriteHeader(http.StatusInternalServerError)
+		switch {
+		case errors.Is(err, subscriptions.ErrSubscriptionNotFound):
+			w.WriteHeader(http.StatusBadRequest)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 		return
 	}
 }

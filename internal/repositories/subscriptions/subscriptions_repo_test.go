@@ -144,6 +144,26 @@ func TestSubscriptionRepo_DeleteSubscriptionInfo(t *testing.T) {
 		assert.Error(t, err)
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
+
+	t.Run("not_found", func(t *testing.T) {
+		mock, err := pgxmock.NewPool()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		userID := "550e8400-e29b-41d4-a716-446655440000"
+		info := &dto.SubscriptionInfo{UserID: userID, ServiceID: 99}
+
+		mock.ExpectExec(regexp.QuoteMeta(deleteSubscriptionData())).
+			WithArgs(userID, 99).
+			WillReturnResult(pgxmock.NewResult("DELETE", 0))
+
+		repo := NewSubscriptionRepo(mock)
+		err = repo.DeleteSubscriptionInfo(t.Context(), info)
+		assert.Error(t, err)
+		assert.True(t, errors.Is(err, ErrSubscriptionNotFound))
+		assert.NoError(t, mock.ExpectationsWereMet())
+	})
 }
 
 func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
@@ -204,6 +224,37 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 		repo := NewSubscriptionRepo(mock)
 		err = repo.UpdateSubscriptionInfo(t.Context(), info)
 		assert.Error(t, err)
+		assert.NoError(t, mock.ExpectationsWereMet())
+	})
+
+	t.Run("not_found", func(t *testing.T) {
+		mock, err := pgxmock.NewPool()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		info := &dto.SubscriptionInfo{
+			UserID:    "550e8400-e29b-41d4-a716-446655440000",
+			ServiceID: 99,
+			Price:     1,
+			StartDate: "2025-01-01",
+			EndDate:   "2025-12-31",
+		}
+
+		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).
+			WithArgs(
+				info.UserID,
+				info.ServiceID,
+				info.StartDate,
+				info.EndDate,
+				info.Price,
+			).
+			WillReturnResult(pgxmock.NewResult("UPDATE", 0))
+
+		repo := NewSubscriptionRepo(mock)
+		err = repo.UpdateSubscriptionInfo(t.Context(), info)
+		assert.Error(t, err)
+		assert.True(t, errors.Is(err, ErrSubscriptionNotFound))
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }
