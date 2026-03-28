@@ -3,6 +3,7 @@ module efmob
 go 1.25.0
 
 require (
+	github.com/go-chi/chi/v5 v5.2.5
 	github.com/go-openapi/testify/v2 v2.4.2
 	github.com/jackc/pgx/v5 v5.9.1
 	github.com/pashagolub/pgxmock/v4 v4.9.0
