@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: efmob
+      POSTGRES_PASSWORD: efmob
+      POSTGRES_DB: efmob
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U efmob -d efmob"]
+      interval: 3s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+
+  subscriptionservice:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URI: postgres://efmob:efmob@db:5432/efmob?sslmode=disable
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
