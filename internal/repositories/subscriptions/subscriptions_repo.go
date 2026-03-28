@@ -2,16 +2,12 @@ package subscriptions
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
-	"efmob/internal/dto"
 	dbinterface "efmob/internal/repositories/db_interface"
+	"efmob/internal/serviceerrors"
 )
-
-// ErrSubscriptionNotFound — DELETE/UPDATE не затронули ни одной строки (записи нет).
-var ErrSubscriptionNotFound = errors.New("subscriptions: no matching subscription row")
 
 type SubscriptionRepo struct {
 	db dbinterface.DbIface
@@ -23,7 +19,7 @@ func NewSubscriptionRepo(pool dbinterface.DbIface) *SubscriptionRepo {
 	}
 }
 
-func (r *SubscriptionRepo) CreateSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
+func (r *SubscriptionRepo) CreateSubscriptionInfo(ctx context.Context, subscriptionInfo *SubscriptionInfo) error {
 	_, err := r.db.Exec(
 		ctx, insertSubscriptionData(),
 		subscriptionInfo.UserID,
@@ -40,7 +36,7 @@ func (r *SubscriptionRepo) CreateSubscriptionInfo(ctx context.Context, subscript
 	return nil
 }
 
-func (r *SubscriptionRepo) GetSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
+func (r *SubscriptionRepo) GetSubscriptionInfo(ctx context.Context, subscriptionInfo *SubscriptionInfo) error {
 	row := r.db.QueryRow(
 		ctx,
 		getSubscriptionData(),
@@ -71,7 +67,7 @@ func (r *SubscriptionRepo) GetSubscriptionInfo(ctx context.Context, subscription
 	return nil
 }
 
-func (r *SubscriptionRepo) DeleteSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
+func (r *SubscriptionRepo) DeleteSubscriptionInfo(ctx context.Context, subscriptionInfo *SubscriptionInfo) error {
 	tag, err := r.db.Exec(
 		ctx,
 		deleteSubscriptionData(),
@@ -82,13 +78,13 @@ func (r *SubscriptionRepo) DeleteSubscriptionInfo(ctx context.Context, subscript
 		return fmt.Errorf("DeleteSubscriptionInfo - Failed to delete subscription info: %w", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("DeleteSubscriptionInfo - %w", ErrSubscriptionNotFound)
+		return fmt.Errorf("DeleteSubscriptionInfo - %w", serviceerrors.ErrSubscriptionNotFound)
 	}
 
 	return nil
 }
 
-func (r *SubscriptionRepo) UpdateSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
+func (r *SubscriptionRepo) UpdateSubscriptionInfo(ctx context.Context, subscriptionInfo *SubscriptionInfo) error {
 	tag, err := r.db.Exec(
 		ctx,
 		updateSubscriptionData(),
@@ -102,7 +98,7 @@ func (r *SubscriptionRepo) UpdateSubscriptionInfo(ctx context.Context, subscript
 		return fmt.Errorf("UpdateSubscriptionInfo - Failed to update subscription info: %w", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("UpdateSubscriptionInfo - %w", ErrSubscriptionNotFound)
+		return fmt.Errorf("UpdateSubscriptionInfo - %w", serviceerrors.ErrSubscriptionNotFound)
 	}
 
 	return nil

@@ -28,12 +28,3 @@ type ServiceInfo struct {
 	Id   *int
 	Name string
 }
-
-// SubscriptionInfo — данные подписки для слоя repositories/subscriptions (не HTTP).
-type SubscriptionInfo struct {
-	ServiceID int
-	Price     int
-	UserID    string
-	StartDate string
-	EndDate   string
-}

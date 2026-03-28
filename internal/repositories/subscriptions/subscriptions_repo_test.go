@@ -1,7 +1,7 @@
 package subscriptions
 
 import (
-	"efmob/internal/dto"
+	"efmob/internal/serviceerrors"
 	"errors"
 	"regexp"
 	"testing"
@@ -22,12 +22,14 @@ func TestSubscriptionRepo_CreateSubscriptionInfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		info := &dto.SubscriptionInfo{
+		start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC)
+		info := &SubscriptionInfo{
 			UserID:    "550e8400-e29b-41d4-a716-446655440000",
 			ServiceID: 42,
 			Price:     999,
-			StartDate: "2025-01-01",
-			EndDate:   "2025-12-31",
+			StartDate: start,
+			EndDate:   end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(insertSubscriptionData())).
@@ -35,8 +37,8 @@ func TestSubscriptionRepo_CreateSubscriptionInfo(t *testing.T) {
 				info.UserID,
 				info.ServiceID,
 				info.Price,
-				info.StartDate,
-				info.EndDate,
+				start,
+				end,
 			).
 			WillReturnResult(pgxmock.NewResult("INSERT", 1))
 
@@ -60,7 +62,7 @@ func TestSubscriptionRepo_GetSubscriptionInfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		info := &dto.SubscriptionInfo{
+		info := &SubscriptionInfo{
 			UserID:    userID,
 			ServiceID: serviceID,
 		}
@@ -85,7 +87,7 @@ func TestSubscriptionRepo_GetSubscriptionInfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		info := &dto.SubscriptionInfo{
+		info := &SubscriptionInfo{
 			UserID:    userID,
 			ServiceID: 999,
 		}
@@ -111,7 +113,7 @@ func TestSubscriptionRepo_DeleteSubscriptionInfo(t *testing.T) {
 
 		userID := "550e8400-e29b-41d4-a716-446655440000"
 		serviceID := 42
-		info := &dto.SubscriptionInfo{
+		info := &SubscriptionInfo{
 			UserID:    userID,
 			ServiceID: serviceID,
 		}
@@ -133,7 +135,7 @@ func TestSubscriptionRepo_DeleteSubscriptionInfo(t *testing.T) {
 		}
 
 		userID := "550e8400-e29b-41d4-a716-446655440000"
-		info := &dto.SubscriptionInfo{UserID: userID, ServiceID: 1}
+		info := &SubscriptionInfo{UserID: userID, ServiceID: 1}
 
 		mock.ExpectExec(regexp.QuoteMeta(deleteSubscriptionData())).
 			WithArgs(userID, 1).
@@ -152,7 +154,7 @@ func TestSubscriptionRepo_DeleteSubscriptionInfo(t *testing.T) {
 		}
 
 		userID := "550e8400-e29b-41d4-a716-446655440000"
-		info := &dto.SubscriptionInfo{UserID: userID, ServiceID: 99}
+		info := &SubscriptionInfo{UserID: userID, ServiceID: 99}
 
 		mock.ExpectExec(regexp.QuoteMeta(deleteSubscriptionData())).
 			WithArgs(userID, 99).
@@ -161,7 +163,7 @@ func TestSubscriptionRepo_DeleteSubscriptionInfo(t *testing.T) {
 		repo := NewSubscriptionRepo(mock)
 		err = repo.DeleteSubscriptionInfo(t.Context(), info)
 		assert.Error(t, err)
-		assert.True(t, errors.Is(err, ErrSubscriptionNotFound))
+		assert.True(t, errors.Is(err, serviceerrors.ErrSubscriptionNotFound))
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }
@@ -173,20 +175,22 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		info := &dto.SubscriptionInfo{
+		start := time.Date(2025, 1, 15, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2025, 6, 30, 0, 0, 0, 0, time.UTC)
+		info := &SubscriptionInfo{
 			UserID:    "550e8400-e29b-41d4-a716-446655440000",
 			ServiceID: 7,
 			Price:     200,
-			StartDate: "2025-01-15",
-			EndDate:   "2025-06-30",
+			StartDate: start,
+			EndDate:   end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).
 			WithArgs(
 				info.UserID,
 				info.ServiceID,
-				info.StartDate,
-				info.EndDate,
+				start,
+				end,
 				info.Price,
 			).
 			WillReturnResult(pgxmock.NewResult("UPDATE", 1))
@@ -203,20 +207,22 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		info := &dto.SubscriptionInfo{
+		start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC)
+		info := &SubscriptionInfo{
 			UserID:    "550e8400-e29b-41d4-a716-446655440000",
 			ServiceID: 1,
 			Price:     1,
-			StartDate: "2025-01-01",
-			EndDate:   "2025-12-31",
+			StartDate: start,
+			EndDate:   end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).
 			WithArgs(
 				info.UserID,
 				info.ServiceID,
-				info.StartDate,
-				info.EndDate,
+				start,
+				end,
 				info.Price,
 			).
 			WillReturnError(errMockDB)
@@ -233,20 +239,22 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 			t.Fatal(err)
 		}
 
-		info := &dto.SubscriptionInfo{
+		start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+		end := time.Date(2025, 12, 31, 0, 0, 0, 0, time.UTC)
+		info := &SubscriptionInfo{
 			UserID:    "550e8400-e29b-41d4-a716-446655440000",
 			ServiceID: 99,
 			Price:     1,
-			StartDate: "2025-01-01",
-			EndDate:   "2025-12-31",
+			StartDate: start,
+			EndDate:   end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).
 			WithArgs(
 				info.UserID,
 				info.ServiceID,
-				info.StartDate,
-				info.EndDate,
+				start,
+				end,
 				info.Price,
 			).
 			WillReturnResult(pgxmock.NewResult("UPDATE", 0))
@@ -254,7 +262,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 		repo := NewSubscriptionRepo(mock)
 		err = repo.UpdateSubscriptionInfo(t.Context(), info)
 		assert.Error(t, err)
-		assert.True(t, errors.Is(err, ErrSubscriptionNotFound))
+		assert.True(t, errors.Is(err, serviceerrors.ErrSubscriptionNotFound))
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }
