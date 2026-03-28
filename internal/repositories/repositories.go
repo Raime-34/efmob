@@ -32,8 +32,8 @@ func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscr
 		ServiceID: *serviceInfo.Id,
 		Price:     data.Price,
 		UserID:    data.UserID,
-		StartData: data.StartData,
-		EndData:   data.EndData,
+		StartDate: data.StartDate,
+		EndDate:   data.EndDate,
 	}
 	if err := r.subscriptionRepo.CreateSubscriptionInfo(ctx, &subscriptionInfo); err != nil {
 		return err

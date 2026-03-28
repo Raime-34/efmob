@@ -4,8 +4,8 @@ type CreateSubscriptionDTO struct {
 	ServiceName string `json:"service_name"`
 	Price       int    `json:"price"`
 	UserID      string `json:"user_id"`
-	StartData   string `json:"start_date"`
-	EndData     string `json:"end_data"`
+	StartDate   string `json:"start_date"`
+	EndDate     string `json:"end_date"`
 }
 
 type ServiceInfo struct {
@@ -17,6 +17,6 @@ type SubscriptionInfo struct {
 	ServiceID int
 	Price     int
 	UserID    string
-	StartData string
-	EndData   string
+	StartDate string
+	EndDate   string
 }
