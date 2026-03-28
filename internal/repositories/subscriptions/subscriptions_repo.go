@@ -24,8 +24,8 @@ func (r *SubscriptionRepo) CreateSubscriptionInfo(ctx context.Context, subscript
 		subscriptionInfo.UserID,
 		subscriptionInfo.ServiceID,
 		subscriptionInfo.Price,
-		subscriptionInfo.StartData,
-		subscriptionInfo.EndData,
+		subscriptionInfo.StartDate,
+		subscriptionInfo.EndDate,
 	)
 
 	if err != nil {
@@ -62,6 +62,37 @@ func (r *SubscriptionRepo) GetSubscriptionInfo(ctx context.Context, subscription
 	}
 
 	subscriptionInfo.Price = price
+
+	return nil
+}
+
+func (r *SubscriptionRepo) DeleteSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
+	_, err := r.db.Exec(
+		ctx,
+		deleteSubscriptionData(),
+		subscriptionInfo.UserID,
+		subscriptionInfo.ServiceID,
+	)
+	if err != nil {
+		return fmt.Errorf("DeleteSubscriptionInfo - Failed to delete subscription info: %w", err)
+	}
+
+	return nil
+}
+
+func (r *SubscriptionRepo) UpdateSubscriptionInfo(ctx context.Context, subscriptionInfo *dto.SubscriptionInfo) error {
+	_, err := r.db.Exec(
+		ctx,
+		updateSubscriptionData(),
+		subscriptionInfo.UserID,
+		subscriptionInfo.ServiceID,
+		subscriptionInfo.StartDate,
+		subscriptionInfo.EndDate,
+		subscriptionInfo.Price,
+	)
+	if err != nil {
+		return fmt.Errorf("UpdateSubscriptionInfo - Failed to update subscription info: %w", err)
+	}
 
 	return nil
 }

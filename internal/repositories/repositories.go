@@ -41,3 +41,43 @@ func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscr
 
 	return nil
 }
+
+func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionDTO) error {
+	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
+	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
+		return err
+	}
+
+	subscriptionInfo := dto.SubscriptionInfo{
+		ServiceID: *serviceInfo.Id,
+		Price:     data.Price,
+		UserID:    data.UserID,
+		StartDate: data.StartDate,
+		EndDate:   data.EndDate,
+	}
+	if err := r.subscriptionRepo.DeleteSubscriptionInfo(ctx, &subscriptionInfo); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *Repo) UpdateSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionDTO) error {
+	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
+	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
+		return err
+	}
+
+	subscriptionInfo := dto.SubscriptionInfo{
+		ServiceID: *serviceInfo.Id,
+		Price:     data.Price,
+		UserID:    data.UserID,
+		StartDate: data.StartDate,
+		EndDate:   data.EndDate,
+	}
+	if err := r.subscriptionRepo.UpdateSubscriptionInfo(ctx, &subscriptionInfo); err != nil {
+		return err
+	}
+
+	return nil
+}
