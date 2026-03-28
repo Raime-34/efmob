@@ -21,7 +21,7 @@ func NewRepo(conn *pgxpool.Pool) *Repo {
 	}
 }
 
-func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionDTO) error {
+func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionRequest) error {
 	// TODO чет сделать со стрктурами которые я в слой репозитория отпраляю
 	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
@@ -42,7 +42,7 @@ func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscr
 	return nil
 }
 
-func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionDTO) error {
+func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.DeleteSubscriptionRequest) error {
 	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
 		return err
@@ -50,10 +50,7 @@ func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.CreateSubscr
 
 	subscriptionInfo := dto.SubscriptionInfo{
 		ServiceID: *serviceInfo.Id,
-		Price:     data.Price,
 		UserID:    data.UserID,
-		StartDate: data.StartDate,
-		EndDate:   data.EndDate,
 	}
 	if err := r.subscriptionRepo.DeleteSubscriptionInfo(ctx, &subscriptionInfo); err != nil {
 		return err
@@ -62,7 +59,7 @@ func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.CreateSubscr
 	return nil
 }
 
-func (r *Repo) UpdateSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionDTO) error {
+func (r *Repo) UpdateSubscriptionInfo(ctx context.Context, data dto.UpdateSubscriptionRequest) error {
 	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
 		return err
