@@ -1,7 +1,6 @@
 package services
 
 import (
-	"efmob/internal/dto"
 	"errors"
 	"regexp"
 	"testing"
@@ -20,10 +19,10 @@ func TestServiceRepo_CreateService(t *testing.T) {
 
 		serviceId := 230
 		serviceName := "test-service"
-		inputData := dto.ServiceInfo{
+		inputData := ServiceInfo{
 			Name: serviceName,
 		}
-		expServiceData := dto.ServiceInfo{
+		expServiceData := ServiceInfo{
 			Id:   &serviceId,
 			Name: serviceName,
 		}
@@ -58,7 +57,7 @@ func TestServiceRepo_GetService(t *testing.T) {
 
 		serviceID := 230
 		serviceName := "test-service"
-		inputData := dto.ServiceInfo{Name: serviceName}
+		inputData := ServiceInfo{Name: serviceName}
 
 		mock.ExpectQuery(regexp.QuoteMeta(getServiceQuery())).
 			WithArgs(serviceName).
@@ -81,7 +80,7 @@ func TestServiceRepo_GetService(t *testing.T) {
 		}
 
 		unknownName := "no-such-service"
-		inputData := dto.ServiceInfo{Name: unknownName}
+		inputData := ServiceInfo{Name: unknownName}
 
 		mock.ExpectQuery(regexp.QuoteMeta(getServiceQuery())).
 			WithArgs(unknownName).
@@ -111,7 +110,7 @@ func TestServiceRepo_GetOrCreate(t *testing.T) {
 				pgxmock.NewRows([]string{"get_or_create_service"}).AddRow(serviceID),
 			)
 
-		info := &dto.ServiceInfo{Name: serviceName}
+		info := &ServiceInfo{Name: serviceName}
 		repo := NewServiceRepo(mock)
 		err = repo.GetOrCreate(t.Context(), info)
 		assert.NoError(t, err)

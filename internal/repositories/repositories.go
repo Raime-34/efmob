@@ -23,7 +23,7 @@ func NewRepo(conn *pgxpool.Pool) *Repo {
 }
 
 func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionRequest) error {
-	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
+	serviceInfo := services.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscr
 }
 
 func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.DeleteSubscriptionRequest) error {
-	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
+	serviceInfo := services.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.DeleteSubscr
 }
 
 func (r *Repo) UpdateSubscriptionInfo(ctx context.Context, data dto.UpdateSubscriptionRequest) error {
-	serviceInfo := dto.ServiceInfo{Name: data.ServiceName}
+	serviceInfo := services.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
 		return err
 	}

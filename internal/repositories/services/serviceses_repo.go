@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"efmob/internal/dto"
 	dbinterface "efmob/internal/repositories/db_interface"
 	"fmt"
 )
@@ -17,7 +16,7 @@ func NewServiceRepo(pool dbinterface.DbIface) *ServiceRepo {
 	}
 }
 
-func (r *ServiceRepo) CreateService(ctx context.Context, serviceInfo *dto.ServiceInfo) error {
+func (r *ServiceRepo) CreateService(ctx context.Context, serviceInfo *ServiceInfo) error {
 	row := r.db.QueryRow(ctx, insertServiceQuery(), serviceInfo.Name)
 	var (
 		id int
@@ -30,7 +29,7 @@ func (r *ServiceRepo) CreateService(ctx context.Context, serviceInfo *dto.Servic
 	return nil
 }
 
-func (r *ServiceRepo) GetService(ctx context.Context, serviceInfo *dto.ServiceInfo) error {
+func (r *ServiceRepo) GetService(ctx context.Context, serviceInfo *ServiceInfo) error {
 	row := r.db.QueryRow(ctx, getServiceQuery(), serviceInfo.Name)
 	var id int
 	if err := row.Scan(&id); err != nil {
@@ -41,7 +40,7 @@ func (r *ServiceRepo) GetService(ctx context.Context, serviceInfo *dto.ServiceIn
 	return nil
 }
 
-func (r *ServiceRepo) GetOrCreate(ctx context.Context, serviceInfo *dto.ServiceInfo) error {
+func (r *ServiceRepo) GetOrCreate(ctx context.Context, serviceInfo *ServiceInfo) error {
 	row := r.db.QueryRow(ctx, getOrCreateServiceQuery(), serviceInfo.Name)
 	var id int
 	if err := row.Scan(&id); err != nil {
