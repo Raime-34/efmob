@@ -20,11 +20,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    environment:
-      DATABASE_URI: postgres://efmob:efmob@db:5432/efmob?sslmode=disable
+    env_file:
+      - .env
     depends_on:
       db:
         condition: service_healthy
+    ports:
+      - "${PORT}:${PORT}"
 
 volumes:
   postgres_data:
