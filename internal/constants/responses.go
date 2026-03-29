@@ -11,6 +11,8 @@ const (
 
 	ListSubscriptionMissingUserIDMessage = `Укажите query-параметр user_id (UUID), например: /api/v1/subscription?user_id=60601fee-2bf1-4721-ae6f-7636e79a0cba`
 
+	ListSubscriptionPaginationInvalidMessage = `Параметры пагинации: page — целое >= 1, per_page — целое от 1 до 100 (по умолчанию page=1, per_page=20)`
+
 	IncorrectDateFormatMessage = `Некорректный формат даты для start_date или end_date. Ожидаемый формат: MM-YYYY (Например: 07-2025).`
 
 	Internal = `Internal`

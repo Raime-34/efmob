@@ -33,10 +33,20 @@ type SubscriptionListItem struct {
 	EndDate     string `json:"end_date,omitempty"`
 }
 
-// ListSubscriptionsResponse — ответ GET /subscription?user_id=…
+// ListSubscriptionsResponse — ответ GET /subscription?user_id=…&page=&per_page=
 type ListSubscriptionsResponse struct {
-	Message       string                 `json:"message"`
-	Subscriptions []SubscriptionListItem `json:"subscriptions"`
+	Message         string                 `json:"message"`
+	Subscriptions   []SubscriptionListItem `json:"subscriptions"`
+	Page            int                    `json:"page"`
+	PerPage         int                    `json:"per_page"`
+	Total           int                    `json:"total"`
+	TotalPages      int                    `json:"total_pages"`
+}
+
+// SubscriptionFilteredSumResponse — ответ GET /subscription/sum (сумма price по фильтру).
+type SubscriptionFilteredSumResponse struct {
+	Message  string `json:"message"`
+	SumPrice int64  `json:"sum_price"`
 }
 
 type Response struct {

@@ -38,7 +38,7 @@ func TestSubscriptionRepo_CreateSubscriptionInfo(t *testing.T) {
 				info.ServiceID,
 				info.Price,
 				start,
-				end,
+				&end,
 			).
 			WillReturnResult(pgxmock.NewResult("INSERT", 1))
 
@@ -69,7 +69,7 @@ func TestSubscriptionRepo_CreateSubscriptionInfo(t *testing.T) {
 				info.ServiceID,
 				info.Price,
 				start,
-				nil,
+				(*time.Time)(nil),
 			).
 			WillReturnResult(pgxmock.NewResult("INSERT", 1))
 
@@ -221,7 +221,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 				info.UserID,
 				info.ServiceID,
 				start,
-				end,
+				&end,
 				info.Price,
 			).
 			WillReturnResult(pgxmock.NewResult("UPDATE", 1))
@@ -252,7 +252,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 				info.UserID,
 				info.ServiceID,
 				start,
-				nil,
+				(*time.Time)(nil),
 				info.Price,
 			).
 			WillReturnResult(pgxmock.NewResult("UPDATE", 1))
@@ -284,7 +284,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 				info.UserID,
 				info.ServiceID,
 				start,
-				end,
+				&end,
 				info.Price,
 			).
 			WillReturnError(errMockDB)
@@ -316,7 +316,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 				info.UserID,
 				info.ServiceID,
 				start,
-				end,
+				&end,
 				info.Price,
 			).
 			WillReturnResult(pgxmock.NewResult("UPDATE", 0))
@@ -325,6 +325,85 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 		err = repo.UpdateSubscriptionInfo(t.Context(), info)
 		assert.Error(t, err)
 		assert.True(t, errors.Is(err, constants.ErrSubscriptionNotFound))
+		assert.NoError(t, mock.ExpectationsWereMet())
+	})
+}
+
+func TestBuildSumPriceQuery(t *testing.T) {
+	uid := "550e8400-e29b-41d4-a716-446655440000"
+	sn := "Netflix"
+	start := time.Date(2025, 1, 1, 0, 0, 0, 0, time.UTC)
+	end := time.Date(2025, 6, 1, 0, 0, 0, 0, time.UTC)
+
+	t.Run("nil_filters", func(t *testing.T) {
+		q, args := buildSumPriceQuery(nil)
+		assert.Contains(t, q, "COALESCE(SUM(sub.price)")
+		assert.Contains(t, q, "WHERE TRUE")
+		assert.Empty(t, args)
+	})
+
+	t.Run("user_only", func(t *testing.T) {
+		q, args := buildSumPriceQuery(&PriceSumFilters{UserID: &uid})
+		assert.Contains(t, q, "sub.user_id = $1")
+		assert.NotContains(t, q, "JOIN services")
+		assert.Equal(t, []any{uid}, args)
+	})
+
+	t.Run("service_join_and_dates", func(t *testing.T) {
+		q, args := buildSumPriceQuery(&PriceSumFilters{
+			UserID:      &uid,
+			ServiceName: &sn,
+			StartDate:   &start,
+			EndDate:     &end,
+		})
+		assert.Contains(t, q, "INNER JOIN services sv")
+		assert.Contains(t, q, "sv.name = $2")
+		assert.Contains(t, q, "sub.start_date >= $3::date")
+		assert.Contains(t, q, "sub.end_date <= $4::date")
+		assert.Equal(t, []any{uid, sn, start, end}, args)
+	})
+}
+
+func TestSubscriptionRepo_SumPrice(t *testing.T) {
+	t.Run("success", func(t *testing.T) {
+		mock, err := pgxmock.NewPool()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		filters := &PriceSumFilters{}
+		q, args := buildSumPriceQuery(filters)
+
+		mock.ExpectQuery(regexp.QuoteMeta(q)).
+			WithArgs(args...).
+			WillReturnRows(
+				pgxmock.NewRows([]string{"sum"}).AddRow(int64(12345)),
+			)
+
+		repo := NewSubscriptionRepo(mock)
+		sum, err := repo.SumPrice(t.Context(), filters)
+		assert.NoError(t, err)
+		assert.Equal(t, int64(12345), sum)
+		assert.NoError(t, mock.ExpectationsWereMet())
+	})
+
+	t.Run("query_error", func(t *testing.T) {
+		mock, err := pgxmock.NewPool()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		uid := "550e8400-e29b-41d4-a716-446655440000"
+		filters := &PriceSumFilters{UserID: &uid}
+		q, args := buildSumPriceQuery(filters)
+
+		mock.ExpectQuery(regexp.QuoteMeta(q)).
+			WithArgs(args...).
+			WillReturnError(errMockDB)
+
+		repo := NewSubscriptionRepo(mock)
+		_, err = repo.SumPrice(t.Context(), filters)
+		assert.Error(t, err)
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }

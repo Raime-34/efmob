@@ -7,11 +7,15 @@ import (
 	"efmob/internal/migrate"
 	"efmob/internal/repositories"
 	"efmob/logger"
+	"fmt"
 	"net/http"
+
+	_ "efmob/docs" // swagger generated docs
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgxpool"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.uber.org/zap"
 )
 
@@ -44,9 +48,13 @@ func InitService() *SubService {
 
 func (s *SubService) mountHandlers() {
 	r := chi.NewRouter()
+	r.Use(requestLogMiddleware)
+
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Route("/subscription", func(r chi.Router) {
+			r.Get("/sum", s.SubscriptionFilteredSumHandler)
 			r.Get("/", s.ListSubscriptionsHandler)
 			r.Post("/", s.InsertSubscriptionHandler)
 			r.Delete("/", s.DeleteSubscriptionHandler)
@@ -55,7 +63,7 @@ func (s *SubService) mountHandlers() {
 		})
 	})
 
-	go http.ListenAndServe(":8080", r)
+	go http.ListenAndServe(fmt.Sprintf(":%v", cfg.GetConfig().Port), r)
 }
 
 type Repositories interface {
@@ -63,5 +71,6 @@ type Repositories interface {
 	DeleteSubscriptionInfo(context.Context, dto.DeleteSubscriptionRequest) error
 	UpdateSubscriptionInfo(context.Context, dto.CreateOrUpdateSubscriptionRequest) error
 	PatchSubscriptionInfo(context.Context, dto.PatchSubscriptionRequest) error
-	ListSubscriptionsByUserID(context.Context, string) ([]dto.SubscriptionListItem, error)
+	ListSubscriptionsByUserID(context.Context, string, int, int) ([]dto.SubscriptionListItem, int, error)
+	SumSubscriptionPriceByFilter(context.Context, string, string, string, string) (int64, error)
 }

@@ -1,3 +1,11 @@
+// Package main — точка входа сервиса подписок.
+//
+// @title Subscription Service API
+// @version 1.0
+// @description REST API подписок: создание, изменение, удаление, список, сумма по фильтру.
+// @host localhost:8080
+// @BasePath /api/v1
+// @schemes http
 package main
 
 import (
@@ -11,8 +19,7 @@ import (
 )
 
 func main() {
-	log := logger.Log()
-	log.Info("starting subscriptionservice")
+	logger.Log().Info("starting subscriptionservice")
 
 	cfg.GetConfig()
 	subscriptionservice.InitService()
@@ -21,5 +28,5 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Info("shutdown complete")
+	logger.Log().Info("shutdown complete")
 }

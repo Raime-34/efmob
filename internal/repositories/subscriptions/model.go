@@ -49,3 +49,42 @@ func NewSubscriptionInfoFromCreate(req dto.CreateOrUpdateSubscriptionRequest, se
 
 	return &subInfo, nil
 }
+
+type PriceSumFilters struct {
+	ServiceName *string
+	UserID      *string
+	StartDate   *time.Time
+	EndDate     *time.Time
+}
+
+func ComposePriceSumFilters(
+	userID string,
+	serviceName string,
+	startDate string,
+	endDate string,
+) (*PriceSumFilters, error) {
+	filters := PriceSumFilters{}
+
+	if userID != "" {
+		filters.UserID = &userID
+	}
+	if serviceName != "" {
+		filters.ServiceName = &serviceName
+	}
+	if startDate != "" {
+		start, err := util.MonthYearToTime(startDate)
+		if err != nil {
+			return nil, err
+		}
+		filters.StartDate = &start
+	}
+	if endDate != "" {
+		end, err := util.MonthYearToTime(endDate)
+		if err != nil {
+			return nil, err
+		}
+		filters.EndDate = &end
+	}
+
+	return &filters, nil
+}
