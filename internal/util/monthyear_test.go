@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"efmob/internal/serviceerrors"
+	"efmob/internal/constants"
 
 	"github.com/go-openapi/testify/v2/assert"
 )
@@ -19,17 +19,17 @@ func TestMonthYearToTime(t *testing.T) {
 
 	_, err = MonthYearToTime("7-2025")
 	assert.Error(t, err)
-	assert.True(t, errors.Is(err, serviceerrors.ErrMonthYearMonthTwoDigits))
+	assert.True(t, errors.Is(err, constants.ErrMonthYearMonthTwoDigits))
 
 	_, err = MonthYearToTime("13-2025")
 	assert.Error(t, err)
-	assert.True(t, errors.Is(err, serviceerrors.ErrMonthYearMonthOutOfRange))
+	assert.True(t, errors.Is(err, constants.ErrMonthYearMonthOutOfRange))
 
 	_, err = MonthYearToTime("2025-07")
 	assert.Error(t, err)
-	assert.True(t, errors.Is(err, serviceerrors.ErrMonthYearMonthTwoDigits))
+	assert.True(t, errors.Is(err, constants.ErrMonthYearMonthTwoDigits))
 
 	_, err = MonthYearToTime("2005")
 	assert.Error(t, err)
-	assert.True(t, errors.Is(err, serviceerrors.ErrMonthYearInvalidFormat))
+	assert.True(t, errors.Is(err, constants.ErrMonthYearInvalidFormat))
 }

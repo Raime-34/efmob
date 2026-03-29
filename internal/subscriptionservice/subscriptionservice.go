@@ -10,12 +10,14 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/zap"
 )
 
 type SubService struct {
-	repo Repositories
+	repo      Repositories
+	validator *validator.Validate
 }
 
 func InitService() *SubService {
@@ -32,7 +34,8 @@ func InitService() *SubService {
 	migrate.MakeMigration(connPool)
 
 	service := &SubService{
-		repo: repositories.NewRepo(connPool),
+		repo:      repositories.NewRepo(connPool),
+		validator: validator.New(validator.WithRequiredStructEnabled()),
 	}
 	service.mountHandlers()
 

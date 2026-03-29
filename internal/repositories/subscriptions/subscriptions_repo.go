@@ -6,7 +6,7 @@ import (
 	"time"
 
 	dbinterface "efmob/internal/repositories/db_interface"
-	"efmob/internal/serviceerrors"
+	"efmob/internal/constants"
 )
 
 type SubscriptionRepo struct {
@@ -78,7 +78,7 @@ func (r *SubscriptionRepo) DeleteSubscriptionInfo(ctx context.Context, subscript
 		return fmt.Errorf("DeleteSubscriptionInfo - Failed to delete subscription info: %w", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("DeleteSubscriptionInfo - %w", serviceerrors.ErrSubscriptionNotFound)
+		return fmt.Errorf("DeleteSubscriptionInfo - %w", constants.ErrSubscriptionNotFound)
 	}
 
 	return nil
@@ -98,7 +98,7 @@ func (r *SubscriptionRepo) UpdateSubscriptionInfo(ctx context.Context, subscript
 		return fmt.Errorf("UpdateSubscriptionInfo - Failed to update subscription info: %w", err)
 	}
 	if tag.RowsAffected() == 0 {
-		return fmt.Errorf("UpdateSubscriptionInfo - %w", serviceerrors.ErrSubscriptionNotFound)
+		return fmt.Errorf("UpdateSubscriptionInfo - %w", constants.ErrSubscriptionNotFound)
 	}
 
 	return nil

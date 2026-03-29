@@ -1,8 +1,6 @@
-package serviceerrors
+package constants
 
-import (
-	"errors"
-)
+import "errors"
 
 var (
 	ErrSubscriptionNotFound = errors.New("Переданная комбианция пользователь-подписка не найдена")

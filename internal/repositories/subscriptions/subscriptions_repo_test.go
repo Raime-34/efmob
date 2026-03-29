@@ -1,7 +1,7 @@
 package subscriptions
 
 import (
-	"efmob/internal/serviceerrors"
+	"efmob/internal/constants"
 	"errors"
 	"regexp"
 	"testing"
@@ -163,7 +163,7 @@ func TestSubscriptionRepo_DeleteSubscriptionInfo(t *testing.T) {
 		repo := NewSubscriptionRepo(mock)
 		err = repo.DeleteSubscriptionInfo(t.Context(), info)
 		assert.Error(t, err)
-		assert.True(t, errors.Is(err, serviceerrors.ErrSubscriptionNotFound))
+		assert.True(t, errors.Is(err, constants.ErrSubscriptionNotFound))
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }
@@ -262,7 +262,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 		repo := NewSubscriptionRepo(mock)
 		err = repo.UpdateSubscriptionInfo(t.Context(), info)
 		assert.Error(t, err)
-		assert.True(t, errors.Is(err, serviceerrors.ErrSubscriptionNotFound))
+		assert.True(t, errors.Is(err, constants.ErrSubscriptionNotFound))
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }
