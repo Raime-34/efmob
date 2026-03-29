@@ -2,6 +2,9 @@ up:
 	docker compose down -v
 	docker compose up -d --build
 
+swagger:
+	go run github.com/swaggo/swag/cmd/swag@v1.8.12 init -g cmd/subscriptionservice/main.go -o docs --parseDependency --parseInternal
+
 test:
 	go test ./...
 
