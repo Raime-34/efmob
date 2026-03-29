@@ -1,0 +1,304 @@
+basePath: /api/v1
+definitions:
+  efmob_internal_dto.CreateOrUpdateSubscriptionRequest:
+    properties:
+      end_date:
+        type: string
+      price:
+        type: integer
+      service_name:
+        type: string
+      start_date:
+        type: string
+      user_id:
+        type: string
+    required:
+    - price
+    - service_name
+    - start_date
+    - user_id
+    type: object
+  efmob_internal_dto.DeleteSubscriptionRequest:
+    properties:
+      service_name:
+        type: string
+      user_id:
+        type: string
+    required:
+    - service_name
+    - user_id
+    type: object
+  efmob_internal_dto.ListSubscriptionsResponse:
+    properties:
+      message:
+        type: string
+      page:
+        type: integer
+      per_page:
+        type: integer
+      subscriptions:
+        items:
+          $ref: '#/definitions/efmob_internal_dto.SubscriptionListItem'
+        type: array
+      total:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  efmob_internal_dto.PatchSubscriptionRequest:
+    properties:
+      end_date:
+        type: string
+      price:
+        type: integer
+      service_name:
+        type: string
+      start_date:
+        type: string
+      user_id:
+        type: string
+    required:
+    - service_name
+    - user_id
+    type: object
+  efmob_internal_dto.Response:
+    properties:
+      message:
+        type: string
+    type: object
+  efmob_internal_dto.SubscriptionFilteredSumResponse:
+    properties:
+      message:
+        type: string
+      sum_price:
+        type: integer
+    type: object
+  efmob_internal_dto.SubscriptionListItem:
+    properties:
+      end_date:
+        type: string
+      price:
+        type: integer
+      service_name:
+        type: string
+      start_date:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: 'REST API подписок: создание, изменение, удаление, список, сумма по
+    фильтру.'
+  title: Subscription Service API
+  version: "1.0"
+paths:
+  /subscription:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Тело запроса
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/efmob_internal_dto.DeleteSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+      summary: Удалить подписку
+      tags:
+      - subscription
+    get:
+      parameters:
+      - description: UUID пользователя
+        in: query
+        name: user_id
+        required: true
+        type: string
+      - description: Номер страницы (с 1), по умолчанию 1
+        in: query
+        name: page
+        type: integer
+      - description: Размер страницы 1–100, по умолчанию 20
+        in: query
+        name: per_page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.ListSubscriptionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.ListSubscriptionsResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.ListSubscriptionsResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.ListSubscriptionsResponse'
+      summary: Список подписок по user_id
+      tags:
+      - subscription
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Тело запроса
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/efmob_internal_dto.PatchSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+      summary: Частичное обновление (PATCH)
+      tags:
+      - subscription
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Тело запроса
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/efmob_internal_dto.CreateOrUpdateSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+      summary: Создать подписку
+      tags:
+      - subscription
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Тело запроса
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/efmob_internal_dto.CreateOrUpdateSubscriptionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.Response'
+      summary: Обновить подписку (PUT)
+      tags:
+      - subscription
+  /subscription/sum:
+    get:
+      parameters:
+      - description: UUID пользователя
+        in: query
+        name: user_id
+        type: string
+      - description: Имя сервиса
+        in: query
+        name: service_name
+        type: string
+      - description: MM-YYYY, подписки с start_date не раньше
+        in: query
+        name: start_date
+        type: string
+      - description: MM-YYYY, подписки с end_date не позже
+        in: query
+        name: end_date
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.SubscriptionFilteredSumResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.SubscriptionFilteredSumResponse'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.SubscriptionFilteredSumResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/efmob_internal_dto.SubscriptionFilteredSumResponse'
+      summary: Сумма подписок по фильтру
+      tags:
+      - subscription
+schemes:
+- http
+swagger: "2.0"
