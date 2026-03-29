@@ -8,6 +8,14 @@ import (
 	"efmob/internal/util"
 )
 
+// ListRow — строка списка подписок пользователя (до маппинга в dto).
+type ListRow struct {
+	ServiceName string
+	Price       int
+	StartDate   time.Time
+	EndDate     *time.Time
+}
+
 // SubscriptionInfo — сущность подписки в слое хранения (не HTTP DTO).
 type SubscriptionInfo struct {
 	ServiceID int

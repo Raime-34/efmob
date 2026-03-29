@@ -9,12 +9,22 @@ func insertSubscriptionData() string {
 
 func getSubscriptionData() string {
 	return `
-		SELECT *
+		SELECT user_id, service_id, price, start_date, end_date
 		FROM subscriptions
 		WHERE 
 			user_id = $1
 			AND 
 			service_id = $2
+	`
+}
+
+func listSubscriptionsByUserID() string {
+	return `
+		SELECT sv.name, s.price, s.start_date, s.end_date
+		FROM subscriptions s
+		JOIN services sv ON s.service_id = sv.service_id
+		WHERE s.user_id = $1
+		ORDER BY sv.name
 	`
 }
 

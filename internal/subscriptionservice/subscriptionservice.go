@@ -47,10 +47,11 @@ func (s *SubService) mountHandlers() {
 
 	r.Route("/api/v1", func(r chi.Router) {
 		r.Route("/subscription", func(r chi.Router) {
+			r.Get("/", s.ListSubscriptionsHandler)
 			r.Post("/", s.InsertSubscriptionHandler)
 			r.Delete("/", s.DeleteSubscriptionHandler)
 			r.Put("/", s.UpdateSubscriptionHandler)
-			r.Patch("/", nil)
+			r.Patch("/", s.PatchSubscriptionHandler)
 		})
 	})
 
@@ -61,4 +62,6 @@ type Repositories interface {
 	InsertSubscriptionInfo(context.Context, dto.CreateOrUpdateSubscriptionRequest) error
 	DeleteSubscriptionInfo(context.Context, dto.DeleteSubscriptionRequest) error
 	UpdateSubscriptionInfo(context.Context, dto.CreateOrUpdateSubscriptionRequest) error
+	PatchSubscriptionInfo(context.Context, dto.PatchSubscriptionRequest) error
+	ListSubscriptionsByUserID(context.Context, string) ([]dto.SubscriptionListItem, error)
 }

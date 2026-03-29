@@ -130,7 +130,7 @@ func TestSubscriptionRepo_GetSubscriptionInfo(t *testing.T) {
 		repo := NewSubscriptionRepo(mock)
 		err = repo.GetSubscriptionInfo(t.Context(), info)
 		assert.Error(t, err)
-		assert.True(t, errors.Is(err, pgx.ErrNoRows))
+		assert.True(t, errors.Is(err, constants.ErrSubscriptionNotFound))
 		assert.NoError(t, mock.ExpectationsWereMet())
 	})
 }

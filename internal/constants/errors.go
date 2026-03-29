@@ -4,6 +4,7 @@ import "errors"
 
 var (
 	ErrSubscriptionNotFound = errors.New("Переданная комбианция пользователь-подписка не найдена")
+	ErrPatchNothingToUpdate = errors.New("не передано ни одного поля для изменения (price, start_date, end_date)")
 
 	// MonthYear (формат MM-YYYY для util.MonthYearToTime).
 	ErrMonthYearInvalidFormat   = errors.New("ожидается формат даты MM-YYYY (месяц-год через дефис)")

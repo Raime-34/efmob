@@ -37,3 +37,8 @@ func MonthYearToTime(s string) (time.Time, error) {
 
 	return time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC), nil
 }
+
+// TimeToMonthYear форматирует дату в строку MM-YYYY (как в MonthYearToTime).
+func TimeToMonthYear(t time.Time) string {
+	return fmt.Sprintf("%02d-%04d", int(t.Month()), t.Year())
+}
