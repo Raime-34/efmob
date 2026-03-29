@@ -63,7 +63,9 @@ func (s *SubService) mountHandlers() {
 		})
 	})
 
-	go http.ListenAndServe(fmt.Sprintf(":%v", cfg.GetConfig().Port), r)
+	port := cfg.GetConfig().Port
+	go http.ListenAndServe(fmt.Sprintf(":%v", port), r)
+	fmt.Printf("Сваггер доступен по адресу: http://localhost:%v/swagger/\n", port)
 }
 
 //go:generate mockgen -source=subscriptionservice.go -destination=../../mocks/repositories.go -package=mock
