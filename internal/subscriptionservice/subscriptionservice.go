@@ -66,6 +66,7 @@ func (s *SubService) mountHandlers() {
 	go http.ListenAndServe(fmt.Sprintf(":%v", cfg.GetConfig().Port), r)
 }
 
+//go:generate mockgen -source=subscriptionservice.go -destination=../../mocks/repositories.go -package=mock
 type Repositories interface {
 	InsertSubscriptionInfo(context.Context, dto.CreateOrUpdateSubscriptionRequest) error
 	DeleteSubscriptionInfo(context.Context, dto.DeleteSubscriptionRequest) error

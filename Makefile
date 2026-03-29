@@ -15,3 +15,6 @@ test_html:
 test_total_cover:
 	go test -coverprofile=cover ./internal/...
 	go tool cover -func=cover
+
+mock:
+	go generate ./...

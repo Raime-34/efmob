@@ -6,10 +6,13 @@ require (
 	github.com/go-chi/chi/v5 v5.2.5
 	github.com/go-openapi/testify/v2 v2.4.2
 	github.com/go-playground/validator/v10 v10.30.1
+	github.com/golang/mock v1.6.0
 	github.com/jackc/pgx/v5 v5.9.1
 	github.com/pashagolub/pgxmock/v4 v4.9.0
 	github.com/pressly/goose/v3 v3.27.0
 	github.com/sethvargo/go-envconfig v1.3.0
+	github.com/swaggo/http-swagger v1.3.4
+	github.com/swaggo/swag v1.8.1
 	go.uber.org/zap v1.27.1
 )
 
@@ -31,8 +34,6 @@ require (
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/swaggo/files v0.0.0-20220610200504-28940afbdbfe // indirect
-	github.com/swaggo/http-swagger v1.3.4 // indirect
-	github.com/swaggo/swag v1.8.1 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.48.0 // indirect
 	golang.org/x/net v0.50.0 // indirect
