@@ -16,6 +16,7 @@ var (
 
 type Config struct {
 	DbDSN string `env:"DATABASE_URI"`
+	Port  string `env:"PORT"`
 }
 
 func GetConfig() *Config {
