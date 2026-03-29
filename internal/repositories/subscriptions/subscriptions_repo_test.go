@@ -29,7 +29,7 @@ func TestSubscriptionRepo_CreateSubscriptionInfo(t *testing.T) {
 			ServiceID: 42,
 			Price:     999,
 			StartDate: start,
-			EndDate:   end,
+			EndDate:   &end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(insertSubscriptionData())).
@@ -39,6 +39,37 @@ func TestSubscriptionRepo_CreateSubscriptionInfo(t *testing.T) {
 				info.Price,
 				start,
 				end,
+			).
+			WillReturnResult(pgxmock.NewResult("INSERT", 1))
+
+		repo := NewSubscriptionRepo(mock)
+		err = repo.CreateSubscriptionInfo(t.Context(), info)
+		assert.NoError(t, err)
+		assert.NoError(t, mock.ExpectationsWereMet())
+	})
+
+	t.Run("success_without_end_date", func(t *testing.T) {
+		mock, err := pgxmock.NewPool()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		start := time.Date(2025, 3, 1, 0, 0, 0, 0, time.UTC)
+		info := &SubscriptionInfo{
+			UserID:    "550e8400-e29b-41d4-a716-446655440000",
+			ServiceID: 42,
+			Price:     500,
+			StartDate: start,
+			EndDate:   nil,
+		}
+
+		mock.ExpectExec(regexp.QuoteMeta(insertSubscriptionData())).
+			WithArgs(
+				info.UserID,
+				info.ServiceID,
+				info.Price,
+				start,
+				nil,
 			).
 			WillReturnResult(pgxmock.NewResult("INSERT", 1))
 
@@ -182,7 +213,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 			ServiceID: 7,
 			Price:     200,
 			StartDate: start,
-			EndDate:   end,
+			EndDate:   &end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).
@@ -191,6 +222,37 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 				info.ServiceID,
 				start,
 				end,
+				info.Price,
+			).
+			WillReturnResult(pgxmock.NewResult("UPDATE", 1))
+
+		repo := NewSubscriptionRepo(mock)
+		err = repo.UpdateSubscriptionInfo(t.Context(), info)
+		assert.NoError(t, err)
+		assert.NoError(t, mock.ExpectationsWereMet())
+	})
+
+	t.Run("success_without_end_date", func(t *testing.T) {
+		mock, err := pgxmock.NewPool()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		start := time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC)
+		info := &SubscriptionInfo{
+			UserID:    "550e8400-e29b-41d4-a716-446655440000",
+			ServiceID: 7,
+			Price:     300,
+			StartDate: start,
+			EndDate:   nil,
+		}
+
+		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).
+			WithArgs(
+				info.UserID,
+				info.ServiceID,
+				start,
+				nil,
 				info.Price,
 			).
 			WillReturnResult(pgxmock.NewResult("UPDATE", 1))
@@ -214,7 +276,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 			ServiceID: 1,
 			Price:     1,
 			StartDate: start,
-			EndDate:   end,
+			EndDate:   &end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).
@@ -246,7 +308,7 @@ func TestSubscriptionRepo_UpdateSubscriptionInfo(t *testing.T) {
 			ServiceID: 99,
 			Price:     1,
 			StartDate: start,
-			EndDate:   end,
+			EndDate:   &end,
 		}
 
 		mock.ExpectExec(regexp.QuoteMeta(updateSubscriptionData())).

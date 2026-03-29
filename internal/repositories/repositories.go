@@ -5,7 +5,6 @@ import (
 	"efmob/internal/dto"
 	"efmob/internal/repositories/services"
 	"efmob/internal/repositories/subscriptions"
-	"efmob/internal/util"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -22,7 +21,7 @@ func NewRepo(conn *pgxpool.Pool) *Repo {
 	}
 }
 
-func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateSubscriptionRequest) error {
+func (r *Repo) InsertSubscriptionInfo(ctx context.Context, data dto.CreateOrUpdateSubscriptionRequest) error {
 	serviceInfo := services.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
 		return err
@@ -57,29 +56,17 @@ func (r *Repo) DeleteSubscriptionInfo(ctx context.Context, data dto.DeleteSubscr
 	return nil
 }
 
-func (r *Repo) UpdateSubscriptionInfo(ctx context.Context, data dto.UpdateSubscriptionRequest) error {
+func (r *Repo) UpdateSubscriptionInfo(ctx context.Context, data dto.CreateOrUpdateSubscriptionRequest) error {
 	serviceInfo := services.ServiceInfo{Name: data.ServiceName}
 	if err := r.servicesRepo.GetOrCreate(ctx, &serviceInfo); err != nil {
 		return err
 	}
 
-	start, err := util.MonthYearToTime(data.StartDate)
+	subscriptionInfo, err := subscriptions.NewSubscriptionInfoFromCreate(data, *serviceInfo.Id)
 	if err != nil {
 		return err
 	}
-	subscriptionInfo := &subscriptions.SubscriptionInfo{
-		ServiceID: *serviceInfo.Id,
-		Price:     data.Price,
-		UserID:    data.UserID,
-		StartDate: start,
-	}
-	if data.EndDate != "" {
-		end, err := util.MonthYearToTime(data.EndDate)
-		if err != nil {
-			return err
-		}
-		subscriptionInfo.EndDate = end
-	}
+
 	if err := r.subscriptionRepo.UpdateSubscriptionInfo(ctx, subscriptionInfo); err != nil {
 		return err
 	}

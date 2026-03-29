@@ -15,7 +15,7 @@ func (s *SubService) InsertSubscriptionHandler(w http.ResponseWriter, r *http.Re
 	var response dto.Response
 
 	decoder := json.NewDecoder(r.Body)
-	var req dto.CreateSubscriptionRequest
+	var req dto.CreateOrUpdateSubscriptionRequest
 	err := decoder.Decode(&req)
 	if err != nil {
 		logger.Log().Error("InsertSubscriptionHandler - Failed to parse request", zap.Error(err))
@@ -26,7 +26,7 @@ func (s *SubService) InsertSubscriptionHandler(w http.ResponseWriter, r *http.Re
 
 	if err = s.validator.Struct(&req); err != nil {
 		logger.Log().Error("InsertSubscriptionHandler - Validation failed", zap.Error(err))
-		response.Message = constants.IncorrectDateFormatMessage
+		response.Message = constants.ValidationFailedMessage
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		goto response
 	}
@@ -101,7 +101,7 @@ func (s *SubService) UpdateSubscriptionHandler(w http.ResponseWriter, r *http.Re
 	var response dto.Response
 
 	decoder := json.NewDecoder(r.Body)
-	var req dto.UpdateSubscriptionRequest
+	var req dto.CreateOrUpdateSubscriptionRequest
 	err := decoder.Decode(&req)
 	if err != nil {
 		logger.Log().Error("UpdateSubscriptionHandler - Failed to parse request", zap.Error(err))
@@ -112,7 +112,7 @@ func (s *SubService) UpdateSubscriptionHandler(w http.ResponseWriter, r *http.Re
 
 	if err = s.validator.Struct(&req); err != nil {
 		logger.Log().Error("UpdateSubscriptionHandler - Validation failed", zap.Error(err))
-		response.Message = err.Error()
+		response.Message = constants.ValidationFailedMessage
 		w.WriteHeader(http.StatusUnprocessableEntity)
 		goto response
 	}

@@ -1,7 +1,7 @@
 package dto
 
-// CreateSubscriptionRequest — тело POST /subscription (создание подписки).
-type CreateSubscriptionRequest struct {
+// CreateOrUpdateSubscriptionRequest — тело POST /subscription (создание подписки), PUT /subscription (полное изменение подписки)
+type CreateOrUpdateSubscriptionRequest struct {
 	ServiceName string `json:"service_name" validate:"required"`
 	Price       int    `json:"price" validate:"required"`
 	UserID      string `json:"user_id" validate:"required,uuid"`
@@ -13,15 +13,6 @@ type CreateSubscriptionRequest struct {
 type DeleteSubscriptionRequest struct {
 	ServiceName string `json:"service_name" validate:"required"`
 	UserID      string `json:"user_id" validate:"required,uuid"`
-}
-
-// UpdateSubscriptionRequest — тело PUT /subscription.
-type UpdateSubscriptionRequest struct {
-	ServiceName string `json:"service_name" validate:"required"`
-	Price       int    `json:"price" validate:"required"`
-	UserID      string `json:"user_id" validate:"required,uuid"`
-	StartDate   string `json:"start_date" validate:"required"`
-	EndDate     string `json:"end_date"`
 }
 
 type PatchSubscriptionRequest struct {

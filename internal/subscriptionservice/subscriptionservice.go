@@ -58,7 +58,7 @@ func (s *SubService) mountHandlers() {
 }
 
 type Repositories interface {
-	InsertSubscriptionInfo(context.Context, dto.CreateSubscriptionRequest) error
+	InsertSubscriptionInfo(context.Context, dto.CreateOrUpdateSubscriptionRequest) error
 	DeleteSubscriptionInfo(context.Context, dto.DeleteSubscriptionRequest) error
-	UpdateSubscriptionInfo(context.Context, dto.UpdateSubscriptionRequest) error
+	UpdateSubscriptionInfo(context.Context, dto.CreateOrUpdateSubscriptionRequest) error
 }
